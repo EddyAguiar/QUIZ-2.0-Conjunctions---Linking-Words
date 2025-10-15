@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>QUIZ (2.0) — Conjunctions & Linking Words</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root{--primary:#0f172a;--accent:#3b82f6;--accent-2:#60a5fa;--card:#fff;--shadow:0 8px 26px rgba(2,6,23,.08);--muted:#6b7280;--maxwidth:980px}
+    body{font-family:Inter, 'Segoe UI', Arial, sans-serif;background:linear-gradient(135deg,#f0f9ff 0%,#eaf6ff 100%);color:var(--primary);padding:18px;display:flex;justify-content:center}
+    .wrap{width:100%;max-width:var(--maxwidth)}
+    header{background:var(--card);padding:14px;border-radius:12px;box-shadow:var(--shadow);border-left:8px solid var(--accent);margin-bottom:12px}
+    h1{margin:0;font-size:1.05rem}
+    .subtitle{color:var(--accent);margin-top:6px;font-weight:600}
+    .quiz-container{background:var(--card);padding:14px;border-radius:12px;box-shadow:var(--shadow);margin-bottom:12px}
+    .pill{padding:6px 10px;border-radius:999px;background:rgba(59,130,246,0.08);font-weight:700;color:var(--accent)}
+    .progress{height:10px;border-radius:10px;background:linear-gradient(90deg,var(--accent-2),var(--accent))}
+    .question{background:#fbfeff;padding:12px;border-left:5px solid var(--accent-2);border-radius:10px;margin-top:8px}
+    .options{display:grid;gap:10px;margin-top:12px}
+    @media(min-width:640px){.options{grid-template-columns:1fr 1fr}}
+    .option{display:flex;align-items:center;gap:12px;padding:12px;border-radius:10px;border:2px solid #e7f1ff;background:#fff;cursor:pointer}
+    .option.correct{border-color:#16a34a;background:rgba(34,197,94,0.06)}
+    .option.incorrect{border-color:#ef4444;background:rgba(239,68,68,0.06)}
+    .feedback{display:none;margin-top:12px;padding:12px;border-radius:10px;background:#fbfeff;border-left:4px solid var(--accent-2)}
+    .feedback.show{display:block}
+    .dropdown{background:var(--card);padding:12px;border-radius:12px;box-shadow:var(--shadow);margin-bottom:18px;border-left:6px solid var(--accent-2)}
+    footer{margin-top:12px;text-align:center;color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1><i class="fas fa-link"></i> QUIZ (2.0) — Conjunctions & Linking Words</h1>
+      <div class="subtitle">Questions in English • Feedback & short explanations in Portuguese</div>
+    </header>
+
+    <!-- BOOTSTRAP CAROUSEL (placeholders assets/...) -->
+    <div class="mb-3">
+      <div id="grammarCarousel" class="carousel slide" data-bs-ride="carousel">
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <img src="assets/Coordinating1.jpg" class="d-block w-100" alt="Conjunctions chart 1 (placeholder)">
+          </div>
+          <div class="carousel-item">
+            <img src="assets/Subordinating.jpg" class="d-block w-100" alt="Linking words chart 2 (placeholder)">
+          </div>
+          <div class="carousel-item">
+            <img src="assets/Coordinating2.jpg" class="d-block w-100" alt="Conjunctions chart 3 (placeholder)">
+          </div>
+          <div class="carousel-item">
+            <img src="assets/Correlative.jpg" class="d-block w-100" alt="Linking words chart 4 (placeholder)">
+          </div>
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#grammarCarousel" data-bs-slide="prev">
+          <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#grammarCarousel" data-bs-slide="next">
+          <span class="carousel-control-next-icon" aria-hidden="true"></span>
+          <span class="visually-hidden">Next</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div class="quiz-container" id="quiz-main" aria-live="polite">
+      <div class="d-flex justify-content-between align-items-center mb-2">
+        <div class="pill">Question <span id="current-question">1</span> / <span id="total-questions"></span></div>
+        <div class="pill">Score: <span id="current-score">0</span></div>
+      </div>
+
+      <div class="mb-2" style="background:#e8f6ff;padding:6px;border-radius:8px"><div id="progressBar" style="width:0%" class="progress"></div></div>
+
+      <div id="question-text" class="question">Loading...</div>
+      <audio id="audio" controls style="display:none;margin-top:8px"></audio>
+      <div id="options-container" class="options" role="list"></div>
+
+      <div id="feedback" class="feedback" aria-live="polite">
+        <div id="correct-answer" style="font-weight:700"></div>
+        <div id="explanation" style="margin-top:6px"></div>
+      </div>
+
+      <div class="d-flex justify-content-end mt-3"><button id="next-btn" class="btn btn-primary" disabled>Next</button></div>
+    </div>
+
+    <!-- Quick Theory & Vocab -->
+    <div class="dropdown" id="study-resources">
+      <div class="dropdown-toggle d-flex justify-content-between align-items-center" id="dropdownToggle" role="button" tabindex="0" style="cursor:pointer">
+        <div><strong><i class="fas fa-book"></i> Quick Theory & Quick Vocab (EN / PT)</strong><br><small style="color:var(--muted)">Tap to expand / Toque para abrir</small></div>
+        <div><i class="fas fa-chevron-right" id="dropdownArrow"></i></div>
+      </div>
+      <div class="dropdown-content" id="dropdownContent" style="max-height:0;overflow:hidden;transition:max-height .3s">
+        <div style="padding-top:10px">
+          <h5>Quick Theory — Conjunctions</h5>
+          <p><strong>Coordinating</strong> (FANBOYS): for, and, nor, but, or, yet, so — connect equal elements.<br>
+             <strong>Subordinating</strong>: because, although, if, when, while, since — connect dependent to independent clauses.<br>
+             <strong>Correlative</strong>: either...or, neither...nor, not only...but also — paired conjunctions.</p>
+
+          <h5>Quick Vocab — Linking Words</h5>
+          <ul>
+            <li><b>However</b> — contrast (formal)</li>
+            <li><b>Therefore / Consequently / As a result</b> — result/consequence</li>
+            <li><b>Although / In spite of / Despite</b> — concession/contrast</li>
+            <li><b>Moreover / Furthermore</b> — addition (formal)</li>
+            <li><b>On the other hand</b> — alternative viewpoint</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <footer><small>Material criado para estudo — Edson D'Aguiar © @InglêsFácilGratuito</small></footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    // QUESTIONS (25) — combined vocabulary from Three_Types_of_Conjunctions2 + Linking Words DeepSeek
+    const questions = [
+      {q: "Which word correctly completes: 'I wanted to go, ___ it was raining.'", sentence:"I wanted to go, but it was raining.", options:["so","but","because","and"], a:1, reason_pt:"'But' indica contraste entre duas ideias."},
+      {q: "Choose the linking word that shows consequence: 'She studied hard; ___, she passed the exam.'", sentence:"She studied hard; therefore, she passed the exam.", options:["however","therefore","although","nevertheless"], a:1, reason_pt:"'Therefore' indica consequência lógica."},
+      {q: "Which is a subordinating conjunction?", sentence:"Because he was tired, he slept early.", options:["and","but","because","or"], a:2, reason_pt:"'Because' é subordinating — conecta razão à oração principal."},
+      {q: "Pick the correlative pair:", sentence:"Either you come or I will go.", options:["for...and","either...or","when...then","but...so"], a:1, reason_pt:"'Either...or' é par correlative que liga opções."},
+      {q: "Complete: '___ the weather was bad, we went out.'", sentence:"Although the weather was bad, we went out.", options:["Although","Therefore","Because","And"], a:0, reason_pt:"'Although' introduz contraste/concessão."},
+      {q: "Which linking word adds information in a formal way?", sentence:"Moreover, the study shows a clear trend.", options:["however","moreover","but","so"], a:1, reason_pt:"'Moreover' adiciona informação e é mais formal que 'and'."},
+      {q: "Choose the correct use: 'In spite ___ the rain, we continued.'", sentence:"In spite of the rain, we continued.", options:["of","with","at","for"], a:0, reason_pt:"A expressão correta é 'in spite of' seguida de noun phrase."},
+      {q: "Which linking word presents an alternative viewpoint?", sentence:"On the other hand, public transport is cheaper.", options:["Therefore","On the other hand","Because","So"], a:1, reason_pt:"'On the other hand' introduz uma visão alternativa."},
+      {q: "Complete: 'I didn't go to the party ___ I was tired.'", sentence:"I didn't go to the party because I was tired.", options:["but","because","so","however"], a:1, reason_pt:"'Because' expressa causa/razão."},
+      {q: "Which is a coordinating conjunction?", sentence:"She likes coffee and tea.", options:["because","although","and","since"], a:2, reason_pt:"'And' é coordinating — conecta elementos de mesma função."},
+      {q: "Choose the best connector for contrast in formal writing:", sentence:"The plan seemed good; however, costs were high.", options:["however","and","so","for"], a:0, reason_pt:"'However' é usado para contraste em contextos formais."},
+      {q: "Complete: 'We will wait ___ you return.'", sentence:"We will wait until you return.", options:["until","because","although","and"], a:0, reason_pt:"'Until' marca limite temporal."},
+      {q: "Which correlative pair is correct?", sentence:"Not only did she sing, but she also danced.", options:["not only...but also","either...or","both...and","neither...nor"], a:0, reason_pt:"'Not only...but also' enfatiza duas qualidades/ações."},
+      {q: "Choose the linking word that signals result:", sentence:"He forgot his ticket; as a result, he couldn't enter.", options:["as a result","in spite of","although","despite"], a:0, reason_pt:"'As a result' indica consequência/result."},
+      {q: "Which is correct: 'She arrived late, ___ she missed the bus.'", sentence:"She arrived late, so she missed the bus.", options:["so","but","because","and"], a:0, reason_pt:"'So' conecta causa e efeito de forma coloquial."},
+      {q: "Choose the word to introduce a concession with a clause:", sentence:"Although he was tired, he finished the work.", options:["Despite","Although","Therefore","Because"], a:1, reason_pt:"'Although' vem antes de uma cláusula (sujeito + verbo)."},
+      {q: "Which linking word requires a noun phrase after it?", sentence:"Despite the challenges, they succeeded.", options:["Despite","Although","When","Unless"], a:0, reason_pt:"'Despite' exige noun phrase ou gerúndio depois."},
+      {q: "Complete: 'I'll come ___ you invite me.'", sentence:"I'll come if you invite me.", options:["if","when","because","despite"], a:0, reason_pt:"'If' introduz condição (condicional)."},
+      {q: "Which linking word is best for addition (formal)?", sentence:"Furthermore, the data confirms the hypothesis.", options:["however","furthermore","because","so"], a:1, reason_pt:"'Furthermore' adiciona informação de forma formal."},
+      {q: "Choose correct use of 'neither...nor':", sentence:"She likes neither coffee nor tea.", options:["She likes neither coffee nor tea.","She neither likes coffee nor tea.","Neither she likes coffee nor tea.","She likes coffee neither nor tea."], a:0, reason_pt:"'Neither...nor' nega ambas as opções."},
+      {q: "Which linking word shows contrast in a short sentence?", sentence:"He tried; nevertheless, he failed.", options:["therefore","nevertheless","and","because"], a:1, reason_pt:"'Nevertheless' mostra contraste / resultado inesperado."},
+      {q: "Complete: 'We left early ___ the rain.' (use 'because of' or 'because')", sentence:"We left early because of the rain.", options:["because of","because","although","despite"], a:0, reason_pt:"'Because of' é seguido por noun phrase; 'because' é seguido por clause."},
+      {q: "Which linking word is used for sequencing/result in formal texts?", sentence:"Consequently, prices increased.", options:["consequently","however","although","but"], a:0, reason_pt:"'Consequently' é formal e indica consequência."},
+      {q: "Choose the subordinating conjunction for time:", sentence:"After she left, we closed the shop.", options:["after","but","and","so"], a:0, reason_pt:"'After' marca sequência temporal (tempo)."},
+      {q: "Which option shows correlative conjunction 'either...or' correctly?", sentence:"Either you apologize or you leave.", options:["Either you apologize or you leave.","You either apologize or leave you.","Either apologize you or leave.","Either you or apologize leave."], a:0, reason_pt:"'Either...or' apresenta duas alternativas mutuamente exclusivas."}
+    ];
+
+    // Quiz engine
+    let currentIndex = 0; let score = 0; const userAnswers = [];
+    const totalEl = document.getElementById('total-questions'); const currentEl = document.getElementById('current-question'); const qText = document.getElementById('question-text'); const optsCont = document.getElementById('options-container'); const fb = document.getElementById('feedback'); const corrEl = document.getElementById('correct-answer'); const explEl = document.getElementById('explanation'); const nextBtn = document.getElementById('next-btn'); const scoreEl = document.getElementById('current-score'); const prog = document.getElementById('progressBar'); const audio = document.getElementById('audio');
+    totalEl.textContent = questions.length; scoreEl.textContent = score;
+
+    function loadQuestion(){
+      const q = questions[currentIndex];
+      currentEl.textContent = currentIndex+1; qText.innerHTML = `<strong>${escapeHtml(q.q)}</strong>`;
+      // TTS
+      if(q.sentence){ audio.style.display='block'; audio.src = `https://api.streamelements.com/kappa/v2/speech?voice=Brian&text=${encodeURIComponent(q.sentence)}`; } else { audio.style.display='none'; audio.src=''; }
+      optsCont.innerHTML = '';
+      q.options.forEach((opt,i)=>{
+        const d = document.createElement('div'); d.className='option'; d.tabIndex=0; d.innerHTML = `<div style="width:36px;height:36px;border-radius:50%;background:#dbeafe;display:flex;align-items:center;justify-content:center;font-weight:800;color:var(--accent-2)">${String.fromCharCode(65+i)}</div><div>${escapeHtml(opt)}</div>`;
+        d.addEventListener('click',()=>selectOption(i)); d.addEventListener('keydown',e=>{ if(e.key==='Enter') selectOption(i); }); optsCont.appendChild(d);
+      });
+      fb.classList.remove('show'); nextBtn.disabled=true; prog.style.width = Math.round((currentIndex/questions.length)*100) + '%'; window.scrollTo({top:0,behavior:'smooth'});
+    }
+
+    function selectOption(i){ if(userAnswers[currentIndex]) return; const q=questions[currentIndex]; const correctIndex = q.a; const nodes = Array.from(document.querySelectorAll('.option'));
+      nodes.forEach(n=>n.classList.remove('selected'));
+      nodes[i].classList.add('selected');
+      fb.classList.add('show'); corrEl.textContent = 'Resposta correta: ' + q.options[correctIndex]; explEl.textContent = q.reason_pt || '';
+      userAnswers[currentIndex]={chosen:q.options[i], correct:q.options[correctIndex]};
+      if(i===correctIndex){ nodes[i].classList.add('correct'); score++; scoreEl.textContent=score; } else { nodes[i].classList.add('incorrect'); nodes[correctIndex].classList.add('correct'); }
+      nextBtn.disabled=false; }
+
+    nextBtn.addEventListener('click',()=>{ currentIndex++; if(currentIndex<questions.length) loadQuestion(); else finish(); });
+
+    function finish(){ document.getElementById('quiz-main').style.display='none'; const wrap=document.querySelector('.wrap'); const out = document.createElement('div'); out.className='quiz-container'; out.innerHTML = `<h2><i class="fas fa-award"></i> Quiz Completed!</h2><div style="font-size:1.6rem;color:var(--accent);font-weight:800;margin:10px 0">${score} / ${questions.length}</div><p>Sua pontuação: ${Math.round((score/questions.length)*100)}%</p><div style="display:flex;gap:10px;justify-content:center;margin-top:12px"><button id="reviewBtn" class="btn btn-primary">Review Answers / Revisar</button> <button class="btn btn-secondary" onclick="location.reload()">Restart / Reiniciar</button></div>`; wrap.appendChild(out);
+      document.getElementById('reviewBtn').addEventListener('click',()=>{ const review = document.createElement('div'); review.className='quiz-container'; review.style.marginTop='12px'; review.innerHTML = '<h3>Review / Revisão</h3>'; questions.forEach((q,i)=>{ const ua = userAnswers[i]?userAnswers[i].chosen:'(sem resposta)'; const correct = q.options[q.a]; const div = document.createElement('div'); div.style.padding='10px'; div.style.background='#fbfeff'; div.style.borderLeft='5px solid var(--accent-2)'; div.style.marginBottom='8px'; div.innerHTML = `<strong>Q${i+1}:</strong> ${escapeHtml(q.q)}<br><strong>Your:</strong> ${escapeHtml(ua)}<br><strong>Correct:</strong> ${escapeHtml(correct)}<br><em>${escapeHtml(q.reason_pt)}</em>`; review.appendChild(div); }); wrap.appendChild(review); window.scrollTo({top:document.body.scrollHeight,behavior:'smooth'}); }); }
+
+    function escapeHtml(t){ if(!t) return ''; return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#039;').replace(/\n/g,'<br>'); }
+
+    // Start
+    loadQuestion();
+
+    // dropdown toggle
+    const toggle = document.getElementById('dropdownToggle'); const content = document.getElementById('dropdownContent'); const arrow = document.getElementById('dropdownArrow'); let open=false; toggle.addEventListener('click',()=>{ open=!open; content.style.maxHeight = open? '900px':'0'; arrow.style.transform = open? 'rotate(90deg)':'rotate(0deg)'; });
+  </script>
+</body>
+</html>
